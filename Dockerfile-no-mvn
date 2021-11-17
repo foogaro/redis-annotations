@@ -1,0 +1,5 @@
+FROM openjdk:8-jdk-alpine as release
+WORKDIR /app
+COPY target/redis-and-3-tiers-apps-*.jar /app/app.jar
+ENTRYPOINT ["java", "-jar"]
+CMD ["/app/app.jar"]
