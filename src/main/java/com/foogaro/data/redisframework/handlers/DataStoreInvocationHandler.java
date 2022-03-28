@@ -9,6 +9,8 @@ import com.foogaro.data.redisframework.annotations.search.Search;
 import com.foogaro.data.redisframework.model.KeyValueModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -28,21 +30,23 @@ import static com.foogaro.data.redisframework.model.FTSConst.FULL_TEXT_SEARCH;
 
 public class DataStoreInvocationHandler implements InvocationHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(DataStoreInvocationHandler.class);
+
     private final String QUERY_PATTERN = "\\{\\{(.+?)\\}\\}";
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("invoke.method: " + method.getName());
+        if (logger.isDebugEnabled()) logger.debug("invoke.method: {}", method.getName());
         String indexName = retrieveIndexName(method.getGenericReturnType());
-        System.out.println("invoke.indexName: " + indexName);
+        if (logger.isDebugEnabled()) logger.debug("invoke.indexName: " + indexName);
         Type model = method.getGenericReturnType();
-        System.out.println("invoke.com.foogaro.data.redisframework.model: " + model);
+        if (logger.isDebugEnabled()) logger.debug("invoke.com.foogaro.data.redisframework.model: " + model);
         Annotation[] search = method.getDeclaredAnnotations();
-        System.out.println("invoke.search: " + search);
+        if (logger.isDebugEnabled()) logger.debug("invoke.search: " + search);
         if (search != null && search.length == 1) {
             List<String> commands = new ArrayList<>();
             Annotation annotation = search[0];
-            System.out.println("invoke.annotation: " + annotation);
+            if (logger.isDebugEnabled()) logger.debug("invoke.annotation: " + annotation);
             if (annotation != null) {
                 Query query = null;
                 if (annotation instanceof Search) {
@@ -112,9 +116,9 @@ public class DataStoreInvocationHandler implements InvocationHandler {
         ParameterizedType pt = (ParameterizedType)type;
         try {
             String obj = pt.getActualTypeArguments()[0].getTypeName();
-            System.out.println("retrieveIndexName.obj: " + obj);
+            if (logger.isDebugEnabled()) logger.debug("retrieveIndexName.obj: " + obj);
             RedisJSON annotation = Class.forName(obj).getDeclaredAnnotation(RedisJSON.class);
-            System.out.println("retrieveIndexName.annotation: " + annotation);
+            if (logger.isDebugEnabled()) logger.debug("retrieveIndexName.annotation: " + annotation);
             return annotation.index().name();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

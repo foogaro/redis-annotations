@@ -12,6 +12,8 @@ import com.foogaro.data.redisframework.model.*;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -24,6 +26,8 @@ import static com.foogaro.data.redisframework.model.FTSCommand.DROPINDEX;
 import static com.foogaro.data.redisframework.model.FTSConst.*;
 
 public class FTSDetector {
+
+    private final Logger logger = LoggerFactory.getLogger(FTSDetector.class);
 
     private List<FTSIndex> indexes = new ArrayList<>();
     private String status;
@@ -86,14 +90,12 @@ public class FTSDetector {
                 commands.add(command);
             }
         }
+        if (logger.isDebugEnabled()) commands.stream().forEach(objects -> objects.stream().forEach(o -> logger.debug("Command: {}", o)));
         return commands;
     }
 
     private void execute() throws RedisException {
         try {
-            String[] commands = new String[]{"SET", "name", "Luigi"};
-            Redis.run(redis -> redis.call(commands), "localhost", 6379);
-
             for (List<Object> command : commandsRESP()) {
                 Redis.run(redis -> {
                     redis.call(command.stream().toArray(Object[]::new));
@@ -159,7 +161,6 @@ public class FTSDetector {
 
     private FTSIndexStrategy indexStrategy(Annotation annotation) {
         if (annotation != null) {
-            String[] prefixes = null;
             if (annotation instanceof RedisJSON) {
                 return ((RedisJSON)annotation).index().indexStrategy();
             } else if (annotation instanceof RedisHash) {
