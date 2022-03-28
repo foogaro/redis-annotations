@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.foogaro.util</groupId>
 	<artifactId>redis-annotations</artifactId>
-	<version>0.2.4-SNAPSHOT</version>
+	<version>0.2.4</version>
 
 	<packaging>jar</packaging>
 
@@ -38,7 +38,7 @@
 		<connection>${project.scm.developerConnection}</connection>
 		<url>${project.url}</url>
 		<developerConnection>scm:git:https://github.com/foogaro/redis-annotations.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>v0.2.4</tag>
   </scm>
 
 	<distributionManagement>
