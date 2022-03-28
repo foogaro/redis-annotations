@@ -1,206 +1,195 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.3</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.foogaro.util</groupId>
-	<artifactId>redis-annotations</artifactId>
-	<version>0.2.5-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.3</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.foogaro.util</groupId>
+    <artifactId>redis-annotations</artifactId>
+    <version>0.2.5-SNAPSHOT</version>
 
-	<packaging>jar</packaging>
+    <packaging>jar</packaging>
 
-	<name>redis-annotations</name>
-	<description>Framework annotations to use in your code for RedisSearch and RedisJSON.</description>
-	<url>https://github.com/foogaro/redis-annotations</url>
+    <name>redis-annotations</name>
+    <description>Framework annotations to use in your code for RedisSearch and RedisJSON.</description>
+    <url>https://github.com/foogaro/redis-annotations</url>
 
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License, Version 3.0</name>
-			<url>https://www.gnu.org/licenses/agpl-3.0.en.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.en.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-	<developers>
-		<developer>
-			<name>Luigi Fugaro</name>
-			<email>luigi@foogaro.com</email>
-			<organization>Foogaro</organization>
-			<organizationUrl>https://www.foogaro.com/</organizationUrl>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>Luigi Fugaro</name>
+            <email>luigi@foogaro.com</email>
+            <organization>Foogaro</organization>
+            <organizationUrl>https://www.foogaro.com/</organizationUrl>
+        </developer>
+    </developers>
 
-	<scm>
-		<connection>${project.scm.developerConnection}</connection>
-		<url>${project.url}</url>
-		<developerConnection>scm:git:https://github.com/foogaro/redis-annotations.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+    <scm>
+        <connection>${project.scm.developerConnection}</connection>
+        <url>${project.url}</url>
+        <developerConnection>scm:git:https://github.com/foogaro/redis-annotations.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>staging-ossrh</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-		<repository>
-			<id>release-ossrh</id>
-			<name>Nexus Release Repository</name>
-			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>staging-ossrh</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>release-ossrh</id>
+            <name>Nexus Release Repository</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>11</maven.compiler.release>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.version>3.8.0</maven.compiler.version>
-		<maven.source.version>3.2.1</maven.source.version>
-		<maven.javadoc.version>3.3.0</maven.javadoc.version>
-		<maven.gpg.version>3.0.1</maven.gpg.version>
-		<maven.release.version>2.5.3</maven.release.version>
-		<maven.test.source>11</maven.test.source>
-		<maven.test.target>11</maven.test.target>
-		<java.version>11</java.version>
-		<slf4j-api.version>1.7.36</slf4j-api.version>
-		<sonatype.version>1.6.8</sonatype.version>
-		<resp4j.version>0.3.16</resp4j.version>
-		<classgraph.version>4.8.141</classgraph.version>
-		<gson.version>2.9.0</gson.version>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.version>3.8.0</maven.compiler.version>
+        <maven.source.version>3.2.1</maven.source.version>
+        <maven.javadoc.version>3.3.0</maven.javadoc.version>
+        <maven.gpg.version>3.0.1</maven.gpg.version>
+        <maven.release.version>2.5.3</maven.release.version>
+        <maven.test.source>11</maven.test.source>
+        <maven.test.target>11</maven.test.target>
+        <java.version>11</java.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <sonatype.version>1.6.8</sonatype.version>
+        <resp4j.version>0.3.16</resp4j.version>
+        <classgraph.version>4.8.141</classgraph.version>
+        <gson.version>2.9.0</gson.version>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>io.github.classgraph</groupId>
-			<artifactId>classgraph</artifactId>
-			<version>${classgraph.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.foogaro.util</groupId>
-			<artifactId>resp4j</artifactId>
-			<version>${resp4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>${classgraph.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.foogaro.util</groupId>
+            <artifactId>resp4j</artifactId>
+            <version>${resp4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+    </dependencies>
 
-	<profiles>
-		<profile>
-			<id>staging-ossrh</id>
-			<properties>
-				<stagingRepository>${project.distributionManagement.snapshotRepository.url}</stagingRepository>
-			</properties>
-		</profile>
-		<profile>
-			<id>release-ossrh</id>
-			<properties>
-				<stagingRepository>${project.distributionManagement.repository.url}</stagingRepository>
-			</properties>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+            <id>staging-ossrh</id>
+            <properties>
+                <stagingRepository>${project.distributionManagement.snapshotRepository.url}</stagingRepository>
+            </properties>
+        </profile>
+        <profile>
+            <id>release-ossrh</id>
+            <properties>
+                <stagingRepository>${project.distributionManagement.repository.url}</stagingRepository>
+            </properties>
+        </profile>
+    </profiles>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-					<release>${maven.compiler.release}</release>
-					<compilerArgument>-Xlint:all</compilerArgument>
-					<showWarnings>true</showWarnings>
-					<showDeprecation>true</showDeprecation>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven.source.version}</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven.javadoc.version}</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
-				<configuration>
-					<gpgArguments>
-						<gpgArgument>--pinentry-mode</gpgArgument>
-						<gpgArgument>loopback</gpgArgument>
-					</gpgArguments>
-				</configuration>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-						<configuration>
-							<keyname>${gpg.keyname}</keyname>
-							<passphraseServerId>${gpg.passphrase}</passphraseServerId>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!--            <plugin>-->
-			<!--                <groupId>org.sonatype.plugins</groupId>-->
-			<!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-			<!--                <version>${sonatype.version}</version>-->
-			<!--                <extensions>true</extensions>-->
-			<!--                <configuration>-->
-			<!--                    <stagingRepositoryId>staging-ossrh</stagingRepositoryId>-->
-			<!--                    <serverId>ossrh</serverId>-->
-			<!--                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
-			<!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-			<!--                </configuration>-->
-			<!--            </plugin>-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>${maven.release.version}</version>
-				<configuration>
-					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<releaseProfiles>release-ossrh</releaseProfiles>
-					<useReleaseProfile>true</useReleaseProfile>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <gpgArguments>
+                        <gpgArgument>--pinentry-mode</gpgArgument>
+                        <gpgArgument>loopback</gpgArgument>
+                    </gpgArguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphraseServerId>${gpg.passphrase}</passphraseServerId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven.release.version}</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <releaseProfiles>release-ossrh</releaseProfiles>
+                    <useReleaseProfile>true</useReleaseProfile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
