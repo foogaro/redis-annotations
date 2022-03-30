@@ -9,8 +9,8 @@ This framework aims to provide a level of abstraction to leverage Redis with Red
 ```xml
 <dependency>
     <groupId>com.foogaro.util</groupId>
-    <artifactId>resp4j</artifactId>
-    <version>0.3.16</version>
+    <artifactId>redis-annotations</artifactId>
+    <version>0.2.7</version>
 </dependency>
 ```
 
@@ -114,10 +114,10 @@ Coming soon.
 Compile the code, run it... and see something like the following in your Redis logs:
 
 ```bash
-redis      | 1:M 17 Nov 2021 15:40:18.670 * <module> Scanning index idx-actors in background
-redis      | 1:M 17 Nov 2021 15:40:18.672 * <module> Scanning indexes in background: done (scanned=1)
-redis      | 1:M 17 Nov 2021 15:40:18.674 * <module> Scanning index idx-movies in background
-redis      | 1:M 17 Nov 2021 15:40:18.674 * <module> Scanning indexes in background: done (scanned=1)
+9:M 30 Mar 2022 07:11:52.422 * <module> Scanning index ix-actors in background
+9:M 30 Mar 2022 07:11:52.423 * <module> Scanning indexes in background: done (scanned=10)
+9:M 30 Mar 2022 07:11:52.474 * <module> Scanning index ix-movies in background
+9:M 30 Mar 2022 07:11:52.475 * <module> Scanning indexes in background: done (scanned=10)
 ```
 
 and you are good to go!
