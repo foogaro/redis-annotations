@@ -14,5 +14,6 @@ public class FTSConst {
     public static final String COLON = ":";
     public static final String HYPHEN = "-";
     public static final String UNDERSCORE = "_";
+    public static final String OK = "OK";
 
 }
