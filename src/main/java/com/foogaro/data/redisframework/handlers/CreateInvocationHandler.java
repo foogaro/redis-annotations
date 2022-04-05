@@ -2,7 +2,8 @@ package com.foogaro.data.redisframework.handlers;
 
 import com.foogaro.data.redisframework.model.JSONCommands;
 import com.foogaro.data.redisframework.model.KeyValueModel;
-import com.google.gson.GsonBuilder;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ public class CreateInvocationHandler extends DataStoreInvocationHandler {
             Object payload = args[0];
             String modelClassName = payload.getClass().getTypeName();
             Class<?> cls = Class.forName(modelClassName);
-            String json = new GsonBuilder().create().toJson(payload, cls);
+            Moshi moshi = new Moshi.Builder().build();
+            JsonAdapter jsonAdapter = moshi.adapter(cls);
+            String json = jsonAdapter.toJson(payload);
             if (logger.isDebugEnabled()) logger.debug("JSON for type {}: {}", modelClassName, json);
             Object id = ((KeyValueModel)payload).getId();
             Object redisResult = pushRedisCommands(prepareRedisCommands(id, json).toArray());
