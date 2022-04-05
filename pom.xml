@@ -71,7 +71,7 @@
         <sonatype.version>1.6.8</sonatype.version>
         <resp4j.version>0.3.16</resp4j.version>
         <classgraph.version>4.8.141</classgraph.version>
-        <gson.version>2.9.0</gson.version>
+        <moshi.version>1.13.0</moshi.version>
     </properties>
 
     <dependencies>
@@ -86,9 +86,9 @@
             <version>${resp4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
+            <groupId>com.squareup.moshi</groupId>
+            <artifactId>moshi</artifactId>
+            <version>${moshi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
