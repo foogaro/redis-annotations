@@ -12,9 +12,5 @@ import java.lang.annotation.*;
 public @interface RedisJSON {
 
     Index index();
-    Serializers serializer() default Serializers.JACKSON2JSON;
-
-    public enum Serializers {
-        JACKSON2JSON, GENERIC, GSON, JDK;
-    }
+    
 }
