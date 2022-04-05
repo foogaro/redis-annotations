@@ -1,6 +1,7 @@
 package com.foogaro.data.redisframework.handlers;
 
 import com.foogaro.data.redisframework.model.JSONCommands;
+import com.foogaro.data.redisframework.model.JSONSerializer;
 import com.foogaro.data.redisframework.model.KeyValueModel;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -19,9 +20,7 @@ public class CreateInvocationHandler extends DataStoreInvocationHandler {
             Object payload = args[0];
             String modelClassName = payload.getClass().getTypeName();
             Class<?> cls = Class.forName(modelClassName);
-            Moshi moshi = new Moshi.Builder().build();
-            JsonAdapter jsonAdapter = moshi.adapter(cls);
-            String json = jsonAdapter.toJson(payload);
+            String json = new JSONSerializer(cls).toJson(payload);
             if (logger.isDebugEnabled()) logger.debug("JSON for type {}: {}", modelClassName, json);
             Object id = ((KeyValueModel)payload).getId();
             Object redisResult = pushRedisCommands(prepareRedisCommands(id, json).toArray());
@@ -48,7 +47,7 @@ public class CreateInvocationHandler extends DataStoreInvocationHandler {
         for (byte b : bytes) {
             sb.append((char)b);
         }
-        return "OK".equalsIgnoreCase(sb.toString());
+        return OK.equalsIgnoreCase(sb.toString());
     }
 
 }

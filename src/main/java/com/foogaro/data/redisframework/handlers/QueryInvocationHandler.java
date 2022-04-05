@@ -4,9 +4,8 @@ import com.foogaro.data.redisframework.annotations.json.RedisJSON;
 import com.foogaro.data.redisframework.annotations.search.Aggregate;
 import com.foogaro.data.redisframework.annotations.search.Query;
 import com.foogaro.data.redisframework.annotations.search.Search;
+import com.foogaro.data.redisframework.model.JSONSerializer;
 import com.foogaro.data.redisframework.model.KeyValueModel;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -69,11 +68,10 @@ public class QueryInvocationHandler extends DataStoreInvocationHandler {
             List strings = (List) response.get(i);
             String type = new String((byte[])strings.get(0));
             String json = new String((byte[])strings.get(1));
-            Gson gson = new GsonBuilder().create();
             Class<?> theClass = null;
             try {
                 theClass = Class.forName(modelClassName);
-                Object model = gson.fromJson(json, theClass);
+                Object model = new JSONSerializer(theClass).fromJson(json);
                 ((KeyValueModel)model).setId(id);
                 result.add(theClass.cast(model));
             } catch (ClassNotFoundException e) {

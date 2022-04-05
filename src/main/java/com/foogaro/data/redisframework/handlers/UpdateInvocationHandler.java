@@ -1,8 +1,8 @@
 package com.foogaro.data.redisframework.handlers;
 
 import com.foogaro.data.redisframework.model.JSONCommands;
+import com.foogaro.data.redisframework.model.JSONSerializer;
 import com.foogaro.data.redisframework.model.KeyValueModel;
-import com.google.gson.GsonBuilder;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class UpdateInvocationHandler extends DataStoreInvocationHandler {
             Object payload = args[0];
             String modelClassName = payload.getClass().getTypeName();
             Class<?> cls = Class.forName(modelClassName);
-            String json = new GsonBuilder().create().toJson(payload, cls);
+            String json = new JSONSerializer(cls).toJson(payload);
             if (logger.isDebugEnabled()) logger.debug("JSON for type {}: {}", modelClassName, json);
             Object id = ((KeyValueModel)payload).getId();
             Object redisResult = pushRedisCommands(prepareRedisCommands(id, json).toArray());
