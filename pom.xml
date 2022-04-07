@@ -63,7 +63,7 @@
         <java.version>11</java.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <sonatype.version>1.6.8</sonatype.version>
-        <resp4j.version>0.3.16</resp4j.version>
+        <resp4j.version>0.3.17</resp4j.version>
         <classgraph.version>4.8.141</classgraph.version>
         <moshi.version>1.13.0</moshi.version>
     </properties>
