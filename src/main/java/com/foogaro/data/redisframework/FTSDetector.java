@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.foogaro.data.redisframework.model.FTSCommand.AS;
@@ -76,12 +77,12 @@ public class FTSDetector {
                 for (FTSField field : fields) {
                     if (index.getOn().equalsIgnoreCase(JSON)) {
                         command.add(DOLLAR + DOT + field.getName());
-                    }
-                    command.add(AS.toString());
-                    if (field.getAsName() != null && !field.getAsName().equals("")) {
-                        command.add(field.getAsName());
-                    } else {
+                    } else if (index.getOn().equalsIgnoreCase(HASH)) {
                         command.add(field.getName());
+                    }
+                    if (field.getAsName() != null && !field.getAsName().equals("")) {
+                        command.add(AS.toString());
+                        command.add(field.getAsName());
                     }
                     command.add(field.getType().toString());
                     if (field.isSortable()) command.add(FTSCommand.SORTABLE.toString());
@@ -95,15 +96,17 @@ public class FTSDetector {
     }
 
     private void execute() throws RedisException {
-        try {
-            for (List<Object> command : commandsRESP()) {
+        for (List<Object> command : commandsRESP()) {
+            try {
                 Redis.run(redis -> {
                     redis.call(command.stream().toArray(Object[]::new));
                 }, "localhost", 6379);
+            } catch (IOException | RedisError e) {
+                if (logger.isTraceEnabled()) e.printStackTrace();
+                if (logger.isDebugEnabled()) command.stream().forEach(o -> logger.debug("Command: {}", o));
+                logger.error("Error: {}", e.getMessage());
+                //throw new RedisException(e);
             }
-        } catch (IOException | RedisError e) {
-            e.printStackTrace();
-            throw new RedisException(e);
         }
     }
 
@@ -197,12 +200,14 @@ public class FTSDetector {
                             foundFTSAnnotations = true;
                             Text at = (Text) annotation;
                             fieldBuilder.type(FTSTypes.TEXT)
+                                    .asName(at.as())
                                     .sortable(at.sortable());
                                     //.caseSensitive(at.caseSensitive());
                         } else if (annotation instanceof Tag) {
                             foundFTSAnnotations = true;
                             Tag at = (Tag) annotation;
                             fieldBuilder.type(FTSTypes.TAG)
+                                    .asName(at.as())
                                     .sortable(at.sortable())
                                     .caseSensitive(at.caseSensitive())
                                     .separator(at.separator());
@@ -210,7 +215,10 @@ public class FTSDetector {
                             foundFTSAnnotations = true;
                             Numeric at = (Numeric) annotation;
                             fieldBuilder.type(FTSTypes.NUMERIC)
+                                    .asName(at.as())
                                     .sortable(at.sortable());
+                        } else {
+                            if (logger.isWarnEnabled()) logger.warn("SKIPPING - Unknown field type: {}", annotation);
                         }
                     }
                     if (foundFTSAnnotations) indexBuilder.addFTSField(fieldBuilder.build());
