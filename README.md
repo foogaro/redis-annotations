@@ -20,7 +20,7 @@ Add the following dependency in your ```pom.xml```:
 <dependency>
     <groupId>com.foogaro.util</groupId>
     <artifactId>redis-annotations</artifactId>
-    <version>0.2.7</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 Now you can use it in your code.
@@ -45,6 +45,7 @@ Assuming we want to index the entire document, so that we can search for any att
 @RedisJSON(index = @Index(name = "ix-movies", indexStrategy = FTSIndexStrategy.CREATE, prefix = "movies:"))
 public class Movie implements KeyValueModel {
 
+    @Key
     private long id;
     @Text(sortable = true)
     private String title;
@@ -69,6 +70,7 @@ public class Movie implements KeyValueModel {
     - _UPDATE_ - index will be updated with the new specification, if it already exists.
       - Not implemented yet. 
   - _prefix_ sets the prefix of the key(s) to consider for indexing (i.e. all the keys starting with "movies:").
+- __@Key__ sets the field as the one holding the Redis key (like for "id" in the example above);
 - __@Text__ sets a textual index to be applied to the relative field declaration (like for "title" in the example above);
 - __@Numeric__ sets a numerical index to be applied to the relative field declaration (like for "rating" and "year" in the example above).
 
@@ -85,7 +87,7 @@ So:
 And this can be achieved defining an interface with those three methods, as follows:
 ```java
 @DataStore
-public interface MovieRepository {
+public interface MovieRepository extends DataStoreOperation<Movie> {
 
     @Search(query = @Query("@title:({{title}})"))
     public List<Movie> byTitle(String title);

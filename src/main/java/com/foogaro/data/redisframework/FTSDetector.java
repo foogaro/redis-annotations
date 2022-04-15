@@ -3,11 +3,13 @@ package com.foogaro.data.redisframework;
 import com.foogaro.data.redis.resp.Redis;
 import com.foogaro.data.redis.resp.exceptions.RedisError;
 import com.foogaro.data.redis.resp.exceptions.RedisException;
+import com.foogaro.data.redisframework.annotations.Key;
 import com.foogaro.data.redisframework.annotations.hash.RedisHash;
 import com.foogaro.data.redisframework.annotations.json.RedisJSON;
 import com.foogaro.data.redisframework.annotations.search.Numeric;
 import com.foogaro.data.redisframework.annotations.search.Tag;
 import com.foogaro.data.redisframework.annotations.search.Text;
+import com.foogaro.data.redisframework.handlers.DataStoreOperation;
 import com.foogaro.data.redisframework.model.*;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
@@ -19,8 +21,9 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.foogaro.data.redisframework.model.FTSCommand.AS;
 import static com.foogaro.data.redisframework.model.FTSCommand.DROPINDEX;
@@ -33,14 +36,17 @@ public class FTSDetector {
     private List<FTSIndex> indexes = new ArrayList<>();
     private String status;
 
+    private ConcurrentHashMap<String, DataStoreInfo> dataStoreMap = DataStoreMap.getDataStoreMap();
+
     public FTSDetector() {
         this("*");
     }
 
     public FTSDetector(String packageName) {
-        this.detect(packageName);
+        detectDataStoreOperations(packageName);
+        buildIndexes();
         try {
-            this.execute();
+            execute();
         } catch (RedisException e) {
             e.printStackTrace();
             this.status = e.getMessage();
@@ -75,9 +81,9 @@ public class FTSDetector {
                 command.add(FTSCommand.SCHEMA.toString());
                 List<FTSField> fields = index.getFtsFields();
                 for (FTSField field : fields) {
-                    if (index.getOn().equalsIgnoreCase(JSON)) {
+                    if (index.getOn().equalsIgnoreCase(DataType.JSON.toString())) {
                         command.add(DOLLAR + DOT + field.getName());
-                    } else if (index.getOn().equalsIgnoreCase(HASH)) {
+                    } else if (index.getOn().equalsIgnoreCase(DataType.HASH.toString())) {
                         command.add(field.getName());
                     }
                     if (field.getAsName() != null && !field.getAsName().equals("")) {
@@ -110,21 +116,64 @@ public class FTSDetector {
         }
     }
 
-    private void detect(String packageName) {
-        this.detectEntities(packageName);
-    }
-
-    private void detectEntities(String packageName) {
+    private void detectDataStoreOperations(String packageName) {
         try (ScanResult scanResult = new ClassGraph()
                 .acceptPackages(packageName)
                 .enableAllInfo()
                 .scan()) {
-            ClassInfoList json = scanResult.getClassesWithAnnotation(RedisJSON.class);
-            ClassInfoList hash = scanResult.getClassesWithAnnotation(RedisHash.class);
-            json.stream().forEach(classInfo -> detectEntityDetails(classInfo.getName(), RedisJSON.class));
-            hash.stream().forEach(classInfo -> detectEntityDetails(classInfo.getName(), RedisHash.class));
+            ClassInfoList classInfoList = scanResult.getClassesImplementing(DataStoreOperation.class);
+            classInfoList.stream().forEach(classInfo -> mapDataStoreOperation(classInfo.getName()));
         }
+    }
 
+    private void mapDataStoreOperation(String dataStoreOperationClassName) {
+        try {
+            DataStoreInfo.Builder dataStoreInfoBuilder = new DataStoreInfo.Builder();
+            dataStoreInfoBuilder.dataStore(dataStoreOperationClassName);
+            String dataModel = dataModel(dataStoreOperationClassName);
+            dataStoreInfoBuilder.dataModel(dataModel);
+            Class<?> cl = Class.forName(dataModel);
+            Annotation an = cl.getDeclaredAnnotations()[0];
+            DataType dataType = dataType(an);
+            dataStoreInfoBuilder.annotationName(dataType.toString());
+            String indexName = indexName(an);
+            dataStoreInfoBuilder.indexName(indexName);
+            String[] prefixKeys = prefixKeys(an);
+            dataStoreInfoBuilder.prefix(prefixKeys[0]);
+            FTSIndexStrategy indexStrategy = indexStrategy(an);
+            dataStoreInfoBuilder.indexStrategy(indexStrategy.toString());
+            dataStoreMap.put(dataStoreOperationClassName, dataStoreInfoBuilder.build());
+            dataStoreMap.put(dataModel, dataStoreInfoBuilder.build());
+            if (logger.isDebugEnabled()) logger.debug("DataStoreInfo: {}", dataStoreInfoBuilder.build());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private String dataModel(String dataStore) {
+        try {
+            Class<?> cl = Class.forName(dataStore);
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("dataStore: {}", dataStore);
+//                logger.debug("dataStore class: {}", cl);
+//                logger.debug("dataStore class generic interface type: {}", cl.getGenericInterfaces()[0]);
+//                logger.debug("dataStore class generic interface type class: {}", cl.getGenericInterfaces()[0].getClass());
+//                logger.debug("dataStore class generic interface type class generic interface type: {}", cl.getGenericInterfaces()[0].getClass().getGenericInterfaces()[0]);
+//                logger.debug("dataStore class generic interface type class generic interface type cast: {}", ((ParameterizedType)cl.getGenericInterfaces()[0].getClass().getGenericInterfaces()[0]));
+//                logger.debug("dataStore class generic interface type class generic interface type cast actual type argument: {}", ((ParameterizedType)cl.getGenericInterfaces()[0].getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
+//            }
+//            Type runtimeType = ((ParameterizedType)cl.getGenericInterfaces()[0].getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0];
+//            String modelClassName = runtimeType.getTypeName();
+            //FIXME: Mamma mia!!!
+            String superInterfaceType = cl.getGenericInterfaces()[0].getTypeName();
+            superInterfaceType = superInterfaceType.substring(superInterfaceType.indexOf('<'));
+            superInterfaceType = superInterfaceType.substring(1, superInterfaceType.indexOf('>'));
+            return superInterfaceType;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
     }
 
     private String indexName(Annotation annotation) {
@@ -138,12 +187,12 @@ public class FTSDetector {
         throw new IllegalArgumentException("Invalid DataModel Annotation");
     }
 
-    private String dataType(Annotation annotation) {
+    private DataType dataType(Annotation annotation) {
         if (annotation != null) {
             if (annotation instanceof RedisJSON) {
-                return JSON;
+                return DataType.JSON;
             } else if (annotation instanceof RedisHash) {
-                return HASH;
+                return DataType.HASH;
             }
         }
         throw new IllegalArgumentException("Invalid DataModel Annotation");
@@ -173,22 +222,27 @@ public class FTSDetector {
         throw new IllegalArgumentException("Invalid DataModel Annotation");
     }
 
-    private void detectEntityDetails(String className, Class dataModel) {
+    private void buildIndexes() {
+        Enumeration<String> keys = dataStoreMap.keys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            if (logger.isDebugEnabled()) logger.debug("DataStoreMap[{}]", key);
+            DataStoreInfo dataStoreInfo = dataStoreMap.get(key);
+            if (logger.isDebugEnabled()) logger.debug("DataStoreInfo: {}", dataStoreInfo);
+            buildIndex(dataStoreInfo);
+        }
+    }
+
+    private void buildIndex(DataStoreInfo dataStoreInfo) {
         try {
-            Class<?> cl = Class.forName(className);
-            Annotation an = cl.getDeclaredAnnotation(dataModel);
-            String dataType = dataType(an);
-            String indexName = indexName(an);
-            String[] prefixKeys = prefixKeys(an);
-            FTSIndexStrategy indexStrategy = indexStrategy(an);
-
             FTSIndex.Builder indexBuilder = new FTSIndex.Builder()
-                    .name(indexName)
-                    .on(dataType)
-                    .prefixCount((prefixKeys.length > 0) ? prefixKeys.length : 1)
-                    .prefixKeys((prefixKeys.length > 0) ? String.join(" ", prefixKeys) : "*")
-                    .indexStrategy(indexStrategy);
+                    .name(dataStoreInfo.getIndexName())
+                    .on(dataStoreInfo.getAnnotationName())
+                    .prefixCount(1)
+                    .prefixKeys(dataStoreInfo.getPrefix())
+                    .indexStrategy(FTSIndexStrategy.valueOf(dataStoreInfo.getIndexStrategy()));
 
+            Class<?> cl = Class.forName(dataStoreInfo.getDataModel());
             Field[] fields = cl.getDeclaredFields();
             for (Field field : fields) {
                 FTSField.Builder fieldBuilder = new FTSField.Builder().name(field.getName());
@@ -202,7 +256,7 @@ public class FTSDetector {
                             fieldBuilder.type(FTSTypes.TEXT)
                                     .asName(at.as())
                                     .sortable(at.sortable());
-                                    //.caseSensitive(at.caseSensitive());
+                            //.caseSensitive(at.caseSensitive());
                         } else if (annotation instanceof Tag) {
                             foundFTSAnnotations = true;
                             Tag at = (Tag) annotation;
@@ -217,6 +271,7 @@ public class FTSDetector {
                             fieldBuilder.type(FTSTypes.NUMERIC)
                                     .asName(at.as())
                                     .sortable(at.sortable());
+                        } else if (annotation instanceof Key) {
                         } else {
                             if (logger.isWarnEnabled()) logger.warn("SKIPPING - Unknown field type: {}", annotation);
                         }

@@ -3,8 +3,6 @@ package com.foogaro.data.redisframework.model;
 public class FTSConst {
 
     public static final String FULL_TEXT_SEARCH = "FT";
-    public static final String JSON = "JSON";
-    public static final String HASH = "HASH";
     public static final String COMMA = ",";
     public static final String DOT = ".";
     public static final String DOLLAR = "$";

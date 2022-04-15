@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.foogaro.data.redisframework.model.FTSCommand.JSON;
 import static com.foogaro.data.redisframework.model.FTSConst.*;
 
 public class CreateInvocationHandler extends DataStoreInvocationHandler {
@@ -22,7 +23,7 @@ public class CreateInvocationHandler extends DataStoreInvocationHandler {
             Class<?> cls = Class.forName(modelClassName);
             String json = new JSONSerializer(cls).toJson(payload);
             if (logger.isDebugEnabled()) logger.debug("JSON for type {}: {}", modelClassName, json);
-            Object id = ((KeyValueModel)payload).getId();
+            String id = calculateId(payload);
             Object redisResult = pushRedisCommands(prepareRedisCommands(id, json).toArray());
             return transform(redisResult);
         } else {
@@ -41,7 +42,7 @@ public class CreateInvocationHandler extends DataStoreInvocationHandler {
         return commands;
     }
 
-    private Boolean transform(Object result) {
+    protected Boolean transform(Object result) {
         byte[] bytes = (byte[]) result;
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {

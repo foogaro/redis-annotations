@@ -1,17 +1,17 @@
-package com.foogaro.data.redisframework.handlers;
+package com.foogaro.data.redisframework.handlers.json;
 
-import com.foogaro.data.redisframework.model.FTSCommand;
+import com.foogaro.data.redisframework.handlers.DataStoreInvocationHandler;
 import com.foogaro.data.redisframework.model.JSONCommands;
 import com.foogaro.data.redisframework.model.JSONSerializer;
-import com.foogaro.data.redisframework.model.KeyValueModel;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.foogaro.data.redisframework.model.FTSCommand.JSON;
 import static com.foogaro.data.redisframework.model.FTSConst.*;
 
-public class UpdateInvocationHandler extends DataStoreInvocationHandler {
+public class CreateInvocationHandler extends DataStoreInvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -21,19 +21,20 @@ public class UpdateInvocationHandler extends DataStoreInvocationHandler {
             Class<?> cls = Class.forName(modelClassName);
             String json = new JSONSerializer(cls).toJson(payload);
             if (logger.isDebugEnabled()) logger.debug("JSON for type {}: {}", modelClassName, json);
-            Object key = ((KeyValueModel)payload).getKey();
-            Object redisResult = pushRedisCommands(prepareRedisCommands(key, json).toArray());
+            //Object id = ((KeyValueModel)payload).getId();
+            String id = calculateId(payload);
+            Object redisResult = pushRedisCommands(prepareRedisCommands(id, json).toArray());
             return transform(redisResult);
         } else {
             logger.error("Payload '{}' not valid for method '{}'.", args, method.getName());
-            throw new IllegalArgumentException("Payload not valid.");
+            throw new IllegalArgumentException("Payload nxot valid.");
         }
     }
 
     @Override
     protected List<String> prepareRedisCommands(Object... parameters) {
         List<String> commands = new ArrayList<>();
-        commands.add(FTSCommand.JSON + DOT + JSONCommands.SET);
+        commands.add(JSON + DOT + JSONCommands.SET);
         commands.add((String) parameters[0]);
         commands.add(DOLLAR);
         commands.add((String) parameters[1]);
@@ -46,7 +47,7 @@ public class UpdateInvocationHandler extends DataStoreInvocationHandler {
         for (byte b : bytes) {
             sb.append((char)b);
         }
-        return "OK".equalsIgnoreCase(sb.toString());
+        return OK.equalsIgnoreCase(sb.toString());
     }
 
 }

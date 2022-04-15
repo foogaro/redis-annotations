@@ -9,9 +9,14 @@ public class ReadInvocationHandler extends DataStoreInvocationHandler {
         throw new UnsupportedOperationException();
     }
 
-
     @Override
     protected List<String> prepareRedisCommands(Object... parameters) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    protected Object transform(Object redisResult) {
+        throw new UnsupportedOperationException();
+    }
+
 }

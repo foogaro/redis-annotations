@@ -72,7 +72,7 @@ public class QueryInvocationHandler extends DataStoreInvocationHandler {
             try {
                 theClass = Class.forName(modelClassName);
                 Object model = new JSONSerializer(theClass).fromJson(json);
-                ((KeyValueModel)model).setId(id);
+                ((KeyValueModel)model).setKey(id);
                 result.add(theClass.cast(model));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -132,4 +132,10 @@ public class QueryInvocationHandler extends DataStoreInvocationHandler {
     protected List<String> prepareRedisCommands(Object... parameters) {
         return null;
     }
+
+    @Override
+    protected Object transform(Object redisResult) {
+        throw new UnsupportedOperationException();
+    }
+
 }
