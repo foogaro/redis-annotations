@@ -1,5 +1,6 @@
-package com.foogaro.data.redisframework.handlers;
+package com.foogaro.data.redisframework.handlers.json;
 
+import com.foogaro.data.redisframework.handlers.DataStoreInvocationHandler;
 import com.foogaro.data.redisframework.model.FTSCommand;
 import com.foogaro.data.redisframework.model.JSONCommands;
 import com.foogaro.data.redisframework.model.JSONSerializer;
@@ -9,7 +10,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.foogaro.data.redisframework.model.FTSConst.*;
+import static com.foogaro.data.redisframework.model.FTSConst.DOLLAR;
+import static com.foogaro.data.redisframework.model.FTSConst.DOT;
 
 public class UpdateInvocationHandler extends DataStoreInvocationHandler {
 
