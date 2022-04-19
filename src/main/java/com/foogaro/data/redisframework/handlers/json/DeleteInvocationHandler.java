@@ -1,4 +1,6 @@
-package com.foogaro.data.redisframework.handlers;
+package com.foogaro.data.redisframework.handlers.json;
+
+import com.foogaro.data.redisframework.handlers.DataStoreInvocationHandler;
 
 import java.lang.reflect.Method;
 import java.util.List;
