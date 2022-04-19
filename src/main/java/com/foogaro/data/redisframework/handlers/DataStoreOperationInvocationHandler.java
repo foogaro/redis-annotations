@@ -1,6 +1,6 @@
 package com.foogaro.data.redisframework.handlers;
 
-import com.foogaro.data.redisframework.factories.CreateInvocationHandlerFactory;
+import com.foogaro.data.redisframework.factories.*;
 import com.foogaro.data.redisframework.model.DataStoreCommands;
 import com.foogaro.data.redisframework.model.DataType;
 
@@ -16,13 +16,13 @@ public class DataStoreOperationInvocationHandler implements InvocationHandler {
         if (DataStoreCommands.CREATE.toString().equalsIgnoreCase(methodName)) {
             return CreateInvocationHandlerFactory.get(dataStoreOperationName, methodName).invoke(proxy, method, args);
         } else if (DataStoreCommands.READ.toString().equalsIgnoreCase(methodName)) {
-            return new ReadInvocationHandler().invoke(proxy, method, args);
+            return ReadInvocationHandlerFactory.get(dataStoreOperationName, methodName).invoke(proxy, method, args);
         } else if (DataStoreCommands.UPDATE.toString().equalsIgnoreCase(methodName)) {
-            return new UpdateInvocationHandler().invoke(proxy, method, args);
+            return UpdateInvocationHandlerFactory.get(dataStoreOperationName, methodName).invoke(proxy, method, args);
         } else if (DataStoreCommands.DELETE.toString().equalsIgnoreCase(methodName)) {
-            return new DeleteInvocationHandler().invoke(proxy, method, args);
+            return DeleteInvocationHandlerFactory.get(dataStoreOperationName, methodName).invoke(proxy, method, args);
         } else {
-            return new QueryInvocationHandler().invoke(proxy, method, args);
+            return QueryInvocationHandlerFactory.get(dataStoreOperationName, methodName).invoke(proxy, method, args);
         }
     }
 
