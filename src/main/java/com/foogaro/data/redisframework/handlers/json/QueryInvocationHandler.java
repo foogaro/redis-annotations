@@ -1,9 +1,10 @@
-package com.foogaro.data.redisframework.handlers;
+package com.foogaro.data.redisframework.handlers.json;
 
 import com.foogaro.data.redisframework.annotations.json.RedisJSON;
 import com.foogaro.data.redisframework.annotations.search.Aggregate;
 import com.foogaro.data.redisframework.annotations.search.Query;
 import com.foogaro.data.redisframework.annotations.search.Search;
+import com.foogaro.data.redisframework.handlers.DataStoreInvocationHandler;
 import com.foogaro.data.redisframework.model.JSONSerializer;
 import com.foogaro.data.redisframework.model.KeyValueModel;
 
